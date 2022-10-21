@@ -1,0 +1,6 @@
+---
+ansible_become: yes
+minikube_user: minikube
+minikube_rpm_url: "https://storage.googleapis.com/minikube/releases/latest/minikube-latest.x86_64.rpm"
+minikube_cpus: 2
+minikube_memory: 2g

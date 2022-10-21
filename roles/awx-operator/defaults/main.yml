@@ -1,0 +1,11 @@
+---
+ansible_become: yes
+minikube_user: minikube
+awx_version: 0.30.0
+awx_namespace: awx
+awx_service: awx-demo
+awx_service_nodeport: 30080
+awx_hostos_port: 8080
+awx_manifest_path: /home/{{ minikube_user }}/manifest
+
+

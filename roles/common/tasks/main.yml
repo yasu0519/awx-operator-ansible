@@ -1,0 +1,27 @@
+---
+- name: Install glibc-langpack-ja
+  ansible.builtin.dnf:
+    name: glibc-langpack-ja
+    state: latest
+
+- name: Set locale
+  ansible.builtin.command: localectl set-locale "{{ os_locale }}"
+
+- name: Set timezone
+  community.general.timezone:
+    name: "{{ os_timezone_name }}"
+
+- name: Upgrade all packages
+  ansible.builtin.dnf:
+    name: "*"
+    state: latest
+
+- name: Install powertools
+  ansible.builtin.shell: dnf config-manager --set-enabled powertools
+  args:
+    warn: no
+
+- name: Install epel
+  ansible.builtin.dnf:
+    name: epel-release
+    state: latest

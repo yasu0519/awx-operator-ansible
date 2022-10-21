@@ -1,0 +1,32 @@
+---
+- name: Install minikube rpm from a remote repo
+  ansible.builtin.dnf:
+    name: "{{ minikube_rpm_url }}"
+    disable_gpg_check: yes
+    state: present
+
+- name: Create minikube user
+  ansible.builtin.user:
+    name: "{{ minikube_user }}"
+    groups: docker
+    append: yes
+
+- name: Add bashrc
+  become_user: "{{ minikube_user }}"
+  ansible.builtin.lineinfile:
+    path: "/home/{{ minikube_user }}/.bashrc"
+    line: 'alias kubectl="minikube kubectl --"'
+    create: yes
+  when: not ansible_check_mode
+
+- name: Create minikube.service
+  ansible.builtin.template:
+    src: minikube.service.j2
+    dest: "/usr/lib/systemd/system/minikube.service"
+
+- name: Start minikube
+  ansible.builtin.service:
+    name: minikube
+    state: started
+    enabled: yes
+  when: not ansible_check_mode

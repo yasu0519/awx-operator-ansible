@@ -1,0 +1,7 @@
+apiVersion: awx.ansible.com/v1beta1
+kind: AWX
+metadata:
+  name: {{ awx_service }}
+spec:
+  service_type: nodeport
+  nodeport_port: {{ awx_service_nodeport }}

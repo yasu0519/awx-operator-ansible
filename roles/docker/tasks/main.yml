@@ -1,0 +1,21 @@
+---
+- name: Add repository
+  ansible.builtin.shell: "dnf config-manager --add-repo {{ docker_repo_url }}"
+  args:
+    warn: no
+
+- name: Install packages
+  ansible.builtin.dnf:
+    name:
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+    state: present
+  when: not ansible_check_mode
+
+- name: Start docker
+  ansible.builtin.service:
+    name: docker
+    state: restarted
+    enabled: yes
+  when: not ansible_check_mode

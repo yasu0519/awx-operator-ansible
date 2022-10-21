@@ -1,0 +1,14 @@
+[Unit]
+Description=port forward for awx service
+After=minikube.service
+
+[Service]
+ExecStart=minikube kubectl -- port-forward --address 0.0.0.0 svc/{{ awx_service }}-service -n {{ awx_namespace }} {{ awx_hostos_port }}:80
+ExecStop=/usr/bin/kill -QUIT $MAINPID
+SyslogIdentifier=awx-portforward
+Restart=always
+User={{ minikube_user }}
+Group={{ minikube_user }}
+
+[Install]
+WantedBy=multi-user.target

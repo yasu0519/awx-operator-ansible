@@ -1,0 +1,4 @@
+---
+ansible_become: yes
+os_locale: ja_JP.UTF-8
+os_timezone_name: Asia/Tokyo

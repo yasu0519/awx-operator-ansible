@@ -1,0 +1,15 @@
+[Unit]
+Description=Minikube service
+After=docker.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/minikube start --cpus={{ minikube_cpus }} --memory={{ minikube_memory }}
+ExecStop=/usr/bin/minikube stop
+SyslogIdentifier=minikube
+User={{ minikube_user }}
+Group={{ minikube_user }}
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,88 @@
+---
+- name: Install git
+  ansible.builtin.dnf:
+    name: git
+    state: present
+
+- name: Create manifest directory
+  become_user: "{{ minikube_user }}"
+  ansible.builtin.file:
+    path: "{{ awx_manifest_path }}"
+    state: directory
+  when: not ansible_check_mode
+
+- name: Create kustomization.yaml.1st
+  become_user: "{{ minikube_user }}"
+  ansible.builtin.template:
+    src: kustomization.yaml.1st.j2
+    dest: "{{ awx_manifest_path }}/kustomization.yaml"
+  when: not ansible_check_mode
+
+- name: Apply Manifest Step 1
+  become_user: "{{ minikube_user }}"
+  ansible.builtin.command: 
+    chdir: "{{ awx_manifest_path }}"
+    cmd: "minikube kubectl -- apply -k ./"
+  when: not ansible_check_mode
+
+- name: Retry tasks until awx-operator-controller-manager pod is running ~ 10sec x 12 times ~
+  become_user: "{{ minikube_user }}"
+  ansible.builtin.shell: "minikube kubectl -- get pods -n awx | grep Running | wc -l"
+  register: result
+  until: result.stdout | int >= 1
+  retries: 12
+  delay: 10
+  when: not ansible_check_mode
+
+- name: Create kustomization.yaml.2nd
+  become_user: "{{ minikube_user }}"
+  ansible.builtin.template:
+    src: kustomization.yaml.2nd.j2
+    dest: "{{ awx_manifest_path }}/kustomization.yaml"
+  when: not ansible_check_mode
+
+- name: Create awx-demo.yaml
+  become_user: "{{ minikube_user }}"
+  ansible.builtin.template:
+    src: awx-demo.yaml.j2
+    dest: "{{ awx_manifest_path }}/awx-demo.yaml"
+  when: not ansible_check_mode
+
+- name: Apply Manifest Step 2
+  become_user: "{{ minikube_user }}"
+  ansible.builtin.command: 
+    chdir: "{{ awx_manifest_path }}"
+    cmd: "minikube kubectl -- apply -k ./"
+  when: not ansible_check_mode
+
+- name: Retry tasks until awx service is running ~ 10sec x 30 times ~
+  become_user: "{{ minikube_user }}"
+  ansible.builtin.shell: "minikube kubectl -- get pods -n awx | grep Running | wc -l"
+  register: result
+  until: result.stdout | int  >= 3
+  retries: 30
+  delay: 10
+  when: not ansible_check_mode
+
+- name: Create awx-portforward.service
+  ansible.builtin.template:
+    src: awx-portforward.service.j2
+    dest: "/usr/lib/systemd/system/awx-portforward.service"
+
+- name: Start awx-portforward
+  ansible.builtin.service:
+    name: awx-portforward
+    state: started
+    enabled: yes
+  when: not ansible_check_mode
+
+- name: Get initial password for awx
+  become_user: "{{ minikube_user }}"
+  ansible.builtin.shell: 'minikube kubectl -- get secret awx-demo-admin-password -n awx -o jsonpath="{.data.password}" | base64 --decode'
+  register: result_pw
+  when: not ansible_check_mode
+
+- name: View initial password for awx
+  ansible.builtin.debug:
+    msg: "{{ result_pw.stdout }}"
+  when: not ansible_check_mode

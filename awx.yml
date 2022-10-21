@@ -1,0 +1,8 @@
+---
+- hosts: awx
+
+  roles:
+    - common
+    - docker
+    - minikube
+    - awx-operator

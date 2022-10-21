@@ -1,0 +1,21 @@
+---
+## host OS
+os_locale: ja_JP.UTF-8
+os_timezone_name: Asia/Tokyo
+
+## docker
+docker_repo_url: "https://download.docker.com/linux/centos/docker-ce.repo"
+
+## minikube
+minikube_user: minikube
+minikube_rpm_url: "https://storage.googleapis.com/minikube/releases/latest/minikube-latest.x86_64.rpm"
+minikube_cpus: 3
+minikube_memory: 14g
+
+## awx
+awx_version: 0.30.0
+awx_namespace: awx
+awx_service: awx-demo
+awx_service_nodeport: 30080
+awx_hostos_port: 8080
+awx_manifest_path: /home/{{ minikube_user }}/manifest
