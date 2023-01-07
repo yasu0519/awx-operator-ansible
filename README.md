@@ -4,7 +4,7 @@ Ansible playbook to build awx-operator on Rocky Linux 8.
 ---
 ## Environment
 
-* Rocky Linux 8.6: AlmaLinux 8.6 compatible
+* Rocky Linux 8.6: AlmaLinux 8.6,8.7 compatible
 * docker
 * minikube
 * awx-operator: 0.3.0
@@ -32,7 +32,7 @@ $ vi awx-operator-ansible/inventories/hosts
 ```
 
 ```
-[redmine]
+[awx]
 xxx.xxx.xxx.xxx ansible_user=root ansible_ssh_private_key_file="/path/to/private_key"
 ```
 
