@@ -4,10 +4,11 @@ Ansible playbook to build awx-operator on Rocky Linux 8.
 ---
 ## Environment
 
-* Rocky Linux 8.6: AlmaLinux 8.6,8.7 compatible
+* Rocky Linux 8.6 compatible 
+* AlmaLinux 8.6, 8.7 compatible
 * docker
 * minikube
-* awx-operator: 0.3.0
+* awx-operator: 1.1.3
 
 * aws: t3.xlarge + disk 50GB
 * ibmcloud: bx2-4x16
